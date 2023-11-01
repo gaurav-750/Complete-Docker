@@ -1,0 +1,68 @@
+Docker commands used in this project
+
+-------------------
+Create Network
+-------------------
+
+docker network create goals-net
+
+
+-------------------
+Run MongoDB Container
+-------------------
+
+docker run --name MongoDB 
+            -e MONGO_INITDB_ROOT_USERNAME=gaurav
+            -e MONGO_INITDB_ROOT_PASSWORD=secret
+            -v goalsData:/data/db
+            --rm -d
+            --network goals-net
+            mongo
+
+        
+-------------------
+Build Node API Image
+-------------------
+
+docker build -t goals-node .
+
+
+-------------------
+Run Node API Container
+-------------------
+
+docker run --name goals-backend
+            -e MONGO_USERNAME=gaurav
+            -e MONGO_PASSWORD=secret
+            -v logsData:/app/logs
+            -v C:\Users\Gaurav\Desktop\Docker\Complete_Docker\multi-starting-setup\backend:/app
+            -v app/node_modules
+            -p 80:80
+            --rm -d
+            --network goals-net
+            goals-node
+
+
+-------------------
+Build React App Image
+-------------------
+
+docker build -t goals-react .
+
+
+-------------------
+Run React App Container
+-------------------
+
+docker run --name goals-frontend
+            -v C:\Users\Gaurav\Desktop\Docker\Complete_Docker\multi-starting-setup\frontend\src:/app/src
+            --rm -d
+            -p 3000:3000
+            goals-react
+
+
+-------------------
+Stop All Containers
+-------------------
+
+docker stop mongoDB goals-backend goals-frontend
