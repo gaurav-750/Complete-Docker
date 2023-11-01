@@ -1,0 +1,4 @@
+node_modules/
+Dockerfile
+.git
+# this wont we copied in the container
