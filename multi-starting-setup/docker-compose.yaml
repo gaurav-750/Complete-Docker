@@ -1,0 +1,44 @@
+version: "3.8"
+
+# it has some nested values
+# we'll have 3 children as we have 3 containers
+services:
+  mongoDB:
+    image: "mongo"
+    volumes:
+      - goalsData:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=gaurav
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+
+  backend:
+    build: ./backend
+    container_name: goals-backend
+    ports:
+      - "80:80"
+    volumes:
+      - logsData:/app/logs
+      - ./backend:/app #in d-c, we can use relative path
+      - /app/node_modules
+    env_file:
+      - ./env/backend.env
+    depends_on:
+      - mongoDB
+
+  frontend:
+    build: ./frontend
+    container_name: goals-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+
+#* we need to specify named volumes here separately
+# anonymous, bind mounts need not be specified here
+volumes:
+  goalsData:
+  logsData:
